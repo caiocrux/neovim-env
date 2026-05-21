@@ -65,9 +65,17 @@ return {
         capabilities = capabilities,
       })
 
+      vim.lsp.config("clangd", {
+        cmd = { "clangd" },
+        filetypes = { "c", "cpp", "objc", "objcpp" },
+        root_markers = { "compile_commands.json", "CMakeLists.txt", "Makefile", ".git" },
+        capabilities = capabilities,
+      })
+
       -- Enable servers
       vim.lsp.enable("rust_analyzer")
       vim.lsp.enable("pyright")
+      vim.lsp.enable("clangd")
     end,
   },
 }
