@@ -1,0 +1,21 @@
+# Plugin data (managed by lazy.nvim)
+plugin/
+
+# Lazy.nvim lock file (optional: include if you want reproducible installs)
+# lazy-lock.json
+
+# Neovim swap/backup/undo files
+*.swp
+*.swo
+*~
+.netrwhist
+
+# Kiro spec files (development artifacts)
+.kiro/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Local overrides (if you create a local config)
+lua/config/local.lua
