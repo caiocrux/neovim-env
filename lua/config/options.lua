@@ -24,4 +24,4 @@ vim.opt.clipboard = "unnamedplus"
 
 -- Syntax and Colorscheme
 vim.cmd("syntax enable")
-vim.cmd("colorscheme industry")
+vim.cmd("colorscheme habamax")

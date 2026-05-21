@@ -1,6 +1,6 @@
 # Neovim Configuration
 
-Modern Neovim configuration written entirely in Lua. Migrated from a traditional Vimscript setup to a modular structure using native Neovim APIs and lazy.nvim for plugin management.
+Modern Neovim configuration written entirely in Lua. Migrated from a traditional Vimscript setup to a modular structure using native Neovim 0.11+ APIs and lazy.nvim for plugin management.
 
 ## Structure
 
@@ -15,14 +15,15 @@ Modern Neovim configuration written entirely in Lua. Migrated from a traditional
     └── plugins/
         ├── cmp.lua          # Autocompletion (nvim-cmp)
         ├── conform.lua      # Format on save (rustfmt)
-        ├── lsp.lua          # Native LSP (Neovim 0.11+ vim.lsp.config)
+        ├── lsp.lua          # Native LSP (vim.lsp.config/vim.lsp.enable)
         ├── nvim-kiro.lua    # Kiro AI assistant integration
         ├── nvim-surround.lua# Surround editing
-        ├── nvim-tree.lua    # File explorer
+        ├── nvim-tree.lua    # File explorer with Unicode icons
         ├── rustaceanvim.lua # Rust development
-        ├── symbols-outline.lua # Code outline
+        ├── symbols-outline.lua # Code outline (aerial.nvim)
         ├── telescope.lua    # Fuzzy finder
-        └── toggleterm.lua   # Terminal integration
+        ├── toggleterm.lua   # Terminal integration
+        └── treesitter.lua   # Syntax highlighting + parsers
 ```
 
 ## Requirements
@@ -31,7 +32,10 @@ Modern Neovim configuration written entirely in Lua. Migrated from a traditional
 - Git (for lazy.nvim bootstrap)
 - A C compiler (for treesitter)
 - [ripgrep](https://github.com/BurntSushi/ripgrep) (for Telescope live grep)
-- Language servers: `rust-analyzer`, `pyright` (install via `:MasonInstall`)
+- Language servers (install via `:MasonInstall`):
+  - `rust-analyzer` (Rust)
+  - `pyright` (Python)
+  - `clangd` (C/C++)
 - `clang-format` (for C/C++ formatting with F8)
 - `kiro-cli` (optional, for Kiro AI integration)
 
@@ -48,6 +52,8 @@ git clone https://github.com/caiocrux/nvim.git ~/.config/nvim
 nvim
 ```
 
+On first launch, treesitter will install parsers for C, C++, Python, Rust, Lua, bash, JSON, YAML, TOML, markdown, and gitcommit.
+
 ## Key Mappings
 
 Leader key: `Space`
@@ -62,7 +68,7 @@ Leader key: `Space`
 | `<F6>` | Normal | Highlight word under cursor |
 | `<F7>` | Normal | Toggle color column at 80 |
 | `<F8>` | Normal/Visual | Format with clang-format |
-| `<F9>` | Normal | Toggle symbols outline |
+| `<F9>` | Normal | Toggle code outline (aerial) |
 
 ### Window Management
 
@@ -111,6 +117,13 @@ Leader key: `Space`
 | `i` | Open in vertical split |
 | `Enter` | Open in current window |
 
+### Git
+
+| Key | Mode | Action |
+|-----|------|--------|
+| `<Space>gb` | Normal | Git blame for current line |
+| `<Space>gb` | Visual | Git blame for selected lines (floating window) |
+
 ### Kiro AI
 
 | Key | Mode | Action |
@@ -128,11 +141,18 @@ Leader key: `Space`
 | vim-plug + pathogen | lazy.nvim |
 | NERDTree | nvim-tree.lua |
 | FZF | telescope.nvim |
-| CoC | native LSP + nvim-cmp + mason |
+| CoC | native LSP (vim.lsp.config) + nvim-cmp + mason |
 | ALE | conform.nvim + native diagnostics |
-| Tagbar | symbols-outline.nvim |
+| Tagbar | aerial.nvim |
 | vim-surround | nvim-surround |
 | rust.vim | rustaceanvim |
+
+## Notes
+
+- No Nerd Font required — all icons use standard Unicode characters
+- LSP uses native Neovim 0.11+ API (`vim.lsp.config`/`vim.lsp.enable`), not the deprecated `nvim-lspconfig` framework
+- Treesitter provides syntax highlighting and powers the aerial code outline
+- The `industry` colorscheme is set in `lua/config/options.lua`
 
 ## License
 

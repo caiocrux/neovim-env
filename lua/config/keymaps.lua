@@ -91,3 +91,46 @@ end, { desc = "Toggle window zoom", silent = true })
 
 -- Visual mode paragraph formatting
 map("v", "<leader>gq", "gq", { desc = "Format paragraph", silent = true })
+
+-- ======================
+--  Git
+-- ======================
+
+-- Git blame for current line
+map("n", "<leader>gb", function()
+  local line = vim.fn.line(".")
+  local file = vim.fn.expand("%")
+  local blame = vim.fn.system("git blame -L " .. line .. "," .. line .. " -- " .. vim.fn.shellescape(file))
+  vim.notify(vim.fn.trim(blame), vim.log.levels.INFO)
+end, { desc = "Git blame current line", silent = true })
+
+-- Git blame for selected lines (visual mode)
+map("v", "<leader>gb", function()
+  vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Esc>", true, false, true), "x", false)
+  vim.schedule(function()
+    local start_line = vim.fn.line("'<")
+    local end_line = vim.fn.line("'>")
+    local file = vim.fn.expand("%")
+    local blame = vim.fn.system(
+      "git blame -L " .. start_line .. "," .. end_line .. " -- " .. vim.fn.shellescape(file)
+    )
+    -- Show in a floating window for multi-line blame
+    local lines = vim.split(vim.fn.trim(blame), "\n")
+    local buf = vim.api.nvim_create_buf(false, true)
+    vim.api.nvim_buf_set_lines(buf, 0, -1, false, lines)
+    local width = math.min(120, vim.o.columns - 4)
+    local height = math.min(#lines, 20)
+    vim.api.nvim_open_win(buf, true, {
+      relative = "cursor",
+      row = 1,
+      col = 0,
+      width = width,
+      height = height,
+      style = "minimal",
+      border = "rounded",
+    })
+    -- Close with q or Esc
+    vim.keymap.set("n", "q", "<cmd>close<CR>", { buffer = buf, silent = true })
+    vim.keymap.set("n", "<Esc>", "<cmd>close<CR>", { buffer = buf, silent = true })
+  end)
+end, { desc = "Git blame selection", silent = true })
