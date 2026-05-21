@@ -1,0 +1,48 @@
+#!/bin/bash
+# Pre-commit hook: runs config tests before each commit
+# Install with: git config core.hooksPath .githooks
+
+echo "=== Pre-commit: Running config tests ==="
+echo ""
+
+# Check Lua syntax for all staged .lua files
+staged_lua=$(git diff --cached --name-only --diff-filter=ACM | grep '\.lua$' || true)
+
+if [ -n "$staged_lua" ]; then
+    echo "Checking Lua syntax..."
+    for file in $staged_lua; do
+        if [ -f "$file" ]; then
+            if ! luac -p "$file" 2>/dev/null; then
+                # If luac not available, try luajit
+                if command -v luajit &> /dev/null; then
+                    if ! luajit -bl "$file" > /dev/null 2>&1; then
+                        echo "  ✗ Syntax error in: $file"
+                        exit 1
+                    fi
+                else
+                    echo "  ⚠ Cannot check syntax (luac/luajit not found): $file"
+                fi
+            fi
+        fi
+    done
+    echo "  ✓ Lua syntax OK"
+    echo ""
+fi
+
+# Run config tests if nvim is available
+if command -v nvim &> /dev/null; then
+    echo "Running config tests..."
+    nvim --headless -u tests/minimal_init.lua -l tests/test_config.lua
+    exit_code=$?
+    if [ $exit_code -ne 0 ]; then
+        echo ""
+        echo "=== Pre-commit FAILED ==="
+        exit 1
+    fi
+else
+    echo "  ⚠ nvim not found, skipping config tests"
+fi
+
+echo ""
+echo "=== Pre-commit PASSED ==="
+exit 0
