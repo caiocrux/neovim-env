@@ -49,6 +49,11 @@ return {
 
       -- i = open in vertical split (like NERDTree)
       vim.keymap.set("n", "i", api.node.open.vertical, opts("Open: Vertical Split"))
+
+      -- t = open in new tab (like NERDTree)
+      vim.keymap.set("n", "t", api.node.open.tab, opts("Open: new tab"))
+
+
     end
 
     require("nvim-tree").setup({
